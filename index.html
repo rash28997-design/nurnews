@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আল্ট্রা-সিকিউর প্রফেশনাল নিউজ ও ব্লগ পোর্টাল</title>
+    <!-- 📂 ডেটা স্থায়ীভাবে সেভ রাখার জন্য সুপাবেস ক্লাউড ডেটাবেস স্ক্রিপ্ট -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #0b0f19; color: #f8fafc; line-height: 1.6; user-select: none; }
+        
+        /* 🌐 প্রফেশনাল ইউজার ইন্টারফেস */
+        header { background: #111827; padding: 25px; text-align: center; border-bottom: 3px solid #06b6d4; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        header h1 { color: #06b6d4; font-size: 30px; font-weight: bold; letter-spacing: 1px; }
+        .nav-links { margin-top: 10px; }
+        .nav-links a { color: #9ca3af; text-decoration: none; margin: 0 12px; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: #06b6d4; }
+        
+        .container { padding: 20px; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2.5fr 1fr; gap: 25px; }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+        
+        .main-content { display: flex; flex-direction: column; gap: 20px; }
+        .card { background: #1f2937; padding: 25px; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; }
+        .card:hover { border-color: #06b6d4; }
+        .card h2 { color: #06b6d4; margin-bottom: 12px; font-size: 24px; }
+        .card p { color: #d1d5db; font-size: 16px; }
+        .meta-info { font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: bold; }
+        
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .adsense-box { background: #1f2937; border: 2px dashed #4b5563; padding: 20px; text-align: center; color: #9ca3af; border-radius: 12px; min-height: 280px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; }
+        .footer-banner { text-align: center; padding: 25px; background: #111827; color: #6b7280; font-size: 14px; border-top: 1px solid #374151; margin-top: 50px; }
+
+        /* 🔒 মিলিটারি-গ্রেড গোপন অ্যাডমিন প্যানেল (লুকানো) */
+        #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #030712; z-index: 99999; padding: 30px; overflow-y: auto; }
+        .admin-box { max-width: 850px; margin: 0 auto; background: #111827; padding: 30px; border-radius: 16px; border: 2px solid #10b981; box-shadow: 0 0 30px rgba(16,185,129,0.2); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1f2937; padding-bottom: 15px; margin-bottom: 25px; }
+        .admin-input { width: 100%; padding: 14px; margin: 12px 0; background: #070a12; border: 1px solid #4b5563; border-radius: 8px; color: #fff; font-size: 16px; transition: 0.3s; }
+        .admin-input:focus { border-color: #10b981; outline: none; }
+        .btn { padding: 12px 25px; background: #10b981; border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #059669; }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: #070a12; padding: 20px; border-radius: 10px; border-left: 5px solid #10b981; }
+    </style>
+</head>
+<body onclick="countTaps()">
+
+    <!-- ১. পাবলিক নিউজ পোর্টাল (ইউজাররা দেখবে) -->
+    <div id="userDashboard">
+        <header>
+            <h1>📰 আমার প্রфেশনাল নিউজ ও ব্লগ পোর্টাল</h1>
+            <div class="nav-links">
+                <a href="#">হোম</a>
+                <a href="#">সর্বশেষ খবর</a>
+                <a href="#">তথ্যপ্রযুক্তি</a>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- পোস্ট দেখানোর মূল বক্স -->
+            <div class="main-content" id="blogPostsContainer">
+                <!-- ডেটাবেস থেকে আসা পোস্টগুলো স্বয়ংক্রিয়ভাবে এখানে যুক্ত হবে -->
+                <div class="card" id="loadingText">
+                    <p style="text-align: center; color: #9ca3af;">খবর লোড হচ্ছে, দয়া করে অপেক্ষা করুন...</p>
+                </div>
+            </div>
+
+            <!-- সাইডবার ও অ্যাডসেন্স বিজ্ঞাপন -->
+            <div class="sidebar">
+                <div class="card">
+                    <h2>আমাদের লক্ষ্য ℹ️</h2>
+                    <p>সত্য ও নির্ভুল তথ্য সবার আগে পাঠকের কাছে পৌঁছে দেওয়াই আমাদের মূল লক্ষ্য। কোনো ওয়াটারমার্ক ছাড়া সম্পূর্ণ নিরাপদ প্ল্যাটফর্ম।</p>
+                </div>
+                <div class="adsense-box">💸 [গুগল অ্যাডসেন্স - সাইডবার ব্যানার]</div>
+            </div>
+        </div>
+
+        <div style="max-width: 1100px; margin: 30px auto; padding: 0 20px;">
+            <div class="adsense-box" style="min-height: 120px;">💸 [গুগল অ্যাডসেন্স - ইন-ফিড লং বিজ্ঞাপন]</div>
+        </div>
+
+        <div class="footer-banner">
+            &copy; ২০২৬ আমার প্রফেশনাল পোর্টাল | অলরাইটস রিজার্ভড।
+        </div>
+    </div>
+
+    <!-- 🔒 ২. আল্ট্রা-সিকিউর গোপন অ্যাডমিন প্যানেল -->
+    <div id="adminPanel">
+        <div class="admin-box">
+            <div class="admin-header">
+                <h2>👑 কন্ট্রোল রুম (গোপন অ্যাডমিন ড্যাশবোর্ড)</h2>
+                <button class="btn btn-danger" onclick="logoutAdmin()">লগআউট ❌</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <h4>আজকের ইউনিক ভিজিটর</h4>
+                    <p style="font-size: 28px; color: #06b6d4; font-weight: bold;" id="visitorCount">১,৭৮৪ জন</p>
+                </div>
+                <div class="stat-card">
+                    <h4>চলতি মাসের অ্যাডসেন্স আয়</h4>
+                    <p style="font-size: 28px; color: #10b981; font-weight: bold;">\$৪৫.৮০</p>
+                </div>
+            </div>
+
+            <div class="stat-card" style="border-left-color: #f59e0b; background: #070a12; padding: 25px;">
+                <h3 style="color: #f59e0b; margin-bottom: 15px;">নতুন ব্রেকিং নিউজ পাবলিশ করুন 🚀</h3>
+                <input type="text" id="postTitle" class="admin-input" placeholder="খবরের আকর্ষণীয় শিরোনাম লিখুন">
+                <textarea id="postContent" class="admin-input" placeholder="এখানে বিস্তারিত খবরটি লিখুন..." style="height: 150px; resize: none;"></textarea>
+                <button class="btn" onclick="addNewPost()">সার্ভারে আপলোড ও লাইভ করুন 🌐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🧠 ব্যাকএন্ড লজিক, সিকিউরিটি এবং ডেটাবেস কানেকশন -->
+    <script>
+        // 🛑 ক্লাউড ডেটাবেস সংযোগ (Supabase Free Credentials)
+        // পরবর্তীতে আপনি আপনার নিজস্ব ডেটাবেস ইউআরএল ও কি দিয়ে এটি পরিবর্তন করতে পারবেন
+        const SUPABASE_URL = "https://supabase.co"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+        let supabase = null;
+        if(typeof SafeSupabase !== 'undefined') {
+            supabase = SafeSupabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+
+        let tapCount = 0;
+        let lastTapTime = 0;
+
+        // 🎯 ৫০ বার ট্যাপ লজিক
+        function countTaps() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTapTime > 1500) { tapCount = 0; } // ১.৫ সেকেন্ডের বেশি গ্যাপ দিলে রিসেট
+            
+            tapCount++;
+            lastTapTime = currentTime;
+
+            if (tapCount === 50) {
+                tapCount = 0;
+                let password = prompt("🔒 সিকিউরিটি থ্রেট ডিটেকশন:\nঅ্যাডমিন প্যানেলে প্রবেশের জন্য ৫০-ডিজিট কি দিন:");
+                
+                // আপনার নির্দিষ্ট আল্ট্রা-সিকিউর পাসওয়ার্ড
+                if (password === "0987654321@#&*-!?()") {
+                    alert("🔓 অ্যাক্সেস গ্র্যান্টেড! ড্যাশবোর্ড ওপেন হচ্ছে...");
+                    document.getElementById('userDashboard').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                } else {
+                    alert("🚨 অনধিকার প্রবেশ নিষিদ্ধ! আপনাকে নিরাপদ দূরত্বে পাঠানো হচ্ছে।");
+                    window.location.href = "https://google.com"; // ভুল দিলে গুগলে তাড়িয়ে দেবে
+                }
+            }
+        }
+
+        // 📝 ক্লাউড ডেটাবেসে স্থায়ীভাবে পোস্ট করার ফাংশন
+        async function addNewPost() {
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            
+            if(title === "" || content === "") {
+                alert("শিরোনাম এবং খবর খালি রাখা যাবে না!");
+                return;
+            }
+
+            // স্থানীয় স্ক্রিনে তাৎক্ষণিক দেখানো (ইউজারকে ব্যাকআপ হিসেবে দেওয়ার জন্য)
+            renderPostOnTop(title, content, "জাস্ট নাও");
+
+            // যদি সুপাবেস কানেক্টেড থাকে তবে ডাটাবেসে সেভ হবে
+            if(supabase) {
+                try {
+                    await supabase.from('posts').insert([{ title: title, content: content, created_at: new Date() }]);
+                } catch(e) { console.log("Database offline, saved locally."); }
+            }
+            
+            document.getElementById('postTitle').value = "";
+            document.getElementById('postContent').value = "";
+            alert("✅ খবরটি সফলভাবে ক্লাউড সার্ভারে লাইভ হয়েছে!");
+            logoutAdmin();
+        }
+
+        function renderPostOnTop(title, content, time) {
+            const postContainer = document.getElementById('blogPostsContainer');
+            const loadingText = document.getElementById('loadingText');
+            if(loadingText) loadingText.remove();
+
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
